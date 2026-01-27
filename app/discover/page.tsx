@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Box, Button, Typography } from '@mui/material';
 
 const vibes = [
   { id: 'chill', name: 'Chill', emoji: '🌊', gradient: 'from-blue-500 to-cyan-500' },
@@ -51,6 +52,26 @@ const events = [
   { id: 4, artist: 'Artist Four', venue: 'The Fillmore', city: 'San Francisco, CA', date: 'Apr 12, 2024', time: '9:00 PM', image: 'from-green-500 to-emerald-500' },
 ];
 
+// Helper function to convert Tailwind gradient classes to CSS gradient
+const getGradient = (gradientClass: string) => {
+  const gradientMap: Record<string, string> = {
+    'from-blue-500 to-cyan-500': 'linear-gradient(to bottom right, #3b82f6, #06b6d4)',
+    'from-yellow-500 to-orange-500': 'linear-gradient(to bottom right, #eab308, #f97316)',
+    'from-green-500 to-emerald-500': 'linear-gradient(to bottom right, #22c55e, #10b981)',
+    'from-pink-500 to-purple-500': 'linear-gradient(to bottom right, #ec4899, #a855f7)',
+    'from-rose-500 to-pink-500': 'linear-gradient(to bottom right, #f43f5e, #ec4899)',
+    'from-red-500 to-orange-500': 'linear-gradient(to bottom right, #ef4444, #f97316)',
+    'from-indigo-500 to-purple-500': 'linear-gradient(to bottom right, #6366f1, #a855f7)',
+    'from-yellow-400 to-orange-400': 'linear-gradient(to bottom right, #facc15, #fb923c)',
+    'from-gray-600 to-blue-600': 'linear-gradient(to bottom right, #4b5563, #2563eb)',
+    'from-amber-600 to-orange-600': 'linear-gradient(to bottom right, #d97706, #ea580c)',
+    'from-purple-500 to-pink-500': 'linear-gradient(to bottom right, #a855f7, #ec4899)',
+    'from-amber-500 to-yellow-500': 'linear-gradient(to bottom right, #f59e0b, #eab308)',
+    'from-pink-500 to-rose-500': 'linear-gradient(to bottom right, #ec4899, #f43f5e)',
+  };
+  return gradientMap[gradientClass] || 'linear-gradient(to bottom right, #a855f7, #ec4899)';
+};
+
 export default function Discover() {
   const [selectedVibe, setSelectedVibe] = useState<string | null>(null);
   const [followedArtists, setFollowedArtists] = useState<Set<number>>(new Set());
@@ -68,254 +89,793 @@ export default function Discover() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-900 via-zinc-800 to-zinc-900 text-white pb-24">
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #18181b, #27272a, #18181b)',
+        color: 'white',
+        pb: '96px',
+      }}
+    >
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center font-bold text-xl">
+      <Box
+        component="header"
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          backgroundColor: 'rgba(24, 24, 27, 0.8)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid #27272a',
+        }}
+      >
+        <Box
+          sx={{
+            maxWidth: '1280px',
+            mx: 'auto',
+            px: 3,
+            py: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                background: 'linear-gradient(to bottom right, #a855f7, #ec4899)',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+                fontSize: '1.25rem',
+              }}
+            >
               S
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            </Box>
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 'bold',
+                background: 'linear-gradient(to right, #a78bfa, #f472b6)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
               Stream
-            </span>
-          </div>
-          <nav className="hidden md:flex items-center gap-8">
-            <a href="/" className="text-zinc-400 hover:text-white transition-colors">Home</a>
-            <a href="/discover" className="text-white transition-colors">Discover</a>
-            <a href="/social" className="text-zinc-400 hover:text-white transition-colors">Social</a>
-            <a href="/create" className="text-zinc-400 hover:text-white transition-colors">Create</a>
-          </nav>
-          <div className="flex items-center gap-4">
-            <button className="px-4 py-2 text-sm font-medium text-white bg-zinc-800 hover:bg-zinc-700 rounded-full transition-colors">
+            </Typography>
+          </Box>
+          <Box
+            component="nav"
+            sx={{
+              display: { xs: 'none', md: 'flex' },
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
+            <Typography
+              component="a"
+              href="/"
+              sx={{
+                color: '#a1a1aa',
+                textDecoration: 'none',
+                '&:hover': { color: 'white' },
+                transition: 'color 0.2s',
+              }}
+            >
+              Home
+            </Typography>
+            <Typography
+              component="a"
+              href="/discover"
+              sx={{
+                color: 'white',
+                textDecoration: 'none',
+              }}
+            >
+              Discover
+            </Typography>
+            <Typography
+              component="a"
+              href="/social"
+              sx={{
+                color: '#a1a1aa',
+                textDecoration: 'none',
+                '&:hover': { color: 'white' },
+                transition: 'color 0.2s',
+              }}
+            >
+              Social
+            </Typography>
+            <Typography
+              component="a"
+              href="/create"
+              sx={{
+                color: '#a1a1aa',
+                textDecoration: 'none',
+                '&:hover': { color: 'white' },
+                transition: 'color 0.2s',
+              }}
+            >
+              Create
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Button
+              variant="contained"
+              sx={{
+                px: 2,
+                py: 1,
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                color: 'white',
+                bgcolor: '#27272a',
+                borderRadius: '9999px',
+                textTransform: 'none',
+                '&:hover': { bgcolor: '#3f3f46' },
+              }}
+            >
               Sign In
-            </button>
-          </div>
-        </div>
-      </header>
+            </Button>
+          </Box>
+        </Box>
+      </Box>
 
-      <main className="container mx-auto px-6 py-8">
+      <Box
+        component="main"
+        sx={{
+          maxWidth: '1280px',
+          mx: 'auto',
+          px: 3,
+          py: 4,
+        }}
+      >
         {/* Select Your Vibe Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Select Your Vibe</h2>
-          <div className="relative">
-            <div className="overflow-x-auto scrollbar-hide pb-4 -mx-6 px-6">
-              <div className="flex gap-4 min-w-max">
+        <Box component="section" sx={{ mb: 6 }}>
+          <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>
+            Select Your Vibe
+          </Typography>
+          <Box sx={{ position: 'relative' }}>
+            <Box
+              sx={{
+                overflowX: 'auto',
+                pb: 2,
+                mx: -3,
+                px: 3,
+                '&::-webkit-scrollbar': { display: 'none' },
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+              }}
+            >
+              <Box sx={{ display: 'flex', gap: 2, minWidth: 'max-content' }}>
                 {vibes.map((vibe) => (
-                  <button
+                  <Button
                     key={vibe.id}
                     onClick={() => setSelectedVibe(selectedVibe === vibe.id ? null : vibe.id)}
-                    className={`group relative flex-shrink-0 w-32 h-40 rounded-2xl bg-gradient-to-br ${vibe.gradient} p-4 flex flex-col items-center justify-center transition-all duration-300 ${
-                      selectedVibe === vibe.id
-                        ? 'scale-110 ring-4 ring-white/50 shadow-2xl'
-                        : 'hover:scale-105 hover:shadow-xl'
-                    }`}
+                    sx={{
+                      flexShrink: 0,
+                      width: 128,
+                      height: 160,
+                      borderRadius: '16px',
+                      background: getGradient(vibe.gradient),
+                      p: 2,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.3s',
+                      transform: selectedVibe === vibe.id ? 'scale(1.1)' : 'scale(1)',
+                      boxShadow: selectedVibe === vibe.id ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)' : 'none',
+                      outline: selectedVibe === vibe.id ? '4px solid rgba(255, 255, 255, 0.5)' : 'none',
+                      position: 'relative',
+                      '&:hover': {
+                        transform: selectedVibe === vibe.id ? 'scale(1.1)' : 'scale(1.05)',
+                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                      },
+                      textTransform: 'none',
+                    }}
                   >
-                    <div className="text-4xl mb-2">{vibe.emoji}</div>
-                    <span className="text-sm font-semibold text-white">{vibe.name}</span>
+                    <Typography sx={{ fontSize: '2.25rem', mb: 1 }}>{vibe.emoji}</Typography>
+                    <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: 'white' }}>
+                      {vibe.name}
+                    </Typography>
                     {selectedVibe === vibe.id && (
-                      <div className="absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                        <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          width: 24,
+                          height: 24,
+                          bgcolor: 'white',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <svg width="16" height="16" fill="#9333ea" viewBox="0 0 24 24">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                         </svg>
-                      </div>
+                      </Box>
                     )}
-                  </button>
+                  </Button>
                 ))}
-              </div>
-            </div>
-          </div>
-        </section>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
 
         {/* Recommended Playlists Feed */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">
+        <Box component="section">
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
               {selectedVibe
                 ? `Recommended for ${vibes.find((v) => v.id === selectedVibe)?.name}`
                 : 'Recommended Playlists'}
-            </h2>
+            </Typography>
             {selectedVibe && (
-              <button
+              <Button
                 onClick={() => setSelectedVibe(null)}
-                className="text-sm text-zinc-400 hover:text-white transition-colors"
+                sx={{
+                  fontSize: '0.875rem',
+                  color: '#a1a1aa',
+                  textTransform: 'none',
+                  '&:hover': { color: 'white', bgcolor: 'transparent' },
+                }}
               >
                 Clear filter
-              </button>
+              </Button>
             )}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          </Box>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                md: 'repeat(2, 1fr)',
+                lg: 'repeat(3, 1fr)',
+                xl: 'repeat(4, 1fr)',
+              },
+              gap: 3,
+            }}
+          >
             {recommendedPlaylists.map((playlist) => (
-              <div
+              <Box
                 key={playlist.id}
-                className="group relative overflow-hidden rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-all duration-300 cursor-pointer"
+                sx={{
+                  position: 'relative',
+                  overflow: 'hidden',
+                  borderRadius: '12px',
+                  bgcolor: '#27272a',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  '&:hover': { bgcolor: '#3f3f46' },
+                }}
               >
-                <div className="relative aspect-square">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${playlist.image}`}></div>
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors"></div>
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
-                      <svg className="w-8 h-8 text-purple-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
+                <Box
+                  sx={{
+                    position: 'relative',
+                    aspectRatio: '1 / 1',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: getGradient(playlist.image),
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      bgcolor: 'rgba(0, 0, 0, 0.2)',
+                      transition: 'background-color 0.3s',
+                      '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.3)' },
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      opacity: 0,
+                      transition: 'opacity 0.3s',
+                      '&:hover': { opacity: 1 },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 64,
+                        height: 64,
+                        bgcolor: 'white',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                        transform: 'scale(1)',
+                        transition: 'transform 0.3s',
+                        '&:hover': { transform: 'scale(1.1)' },
+                      }}
+                    >
+                      <svg width="32" height="32" fill="#9333ea" viewBox="0 0 24 24" style={{ marginLeft: '4px' }}>
+                        <path d="M8 5v14l11-7z" />
                       </svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-lg mb-1 truncate">{playlist.title}</h3>
-                  <p className="text-sm text-zinc-400 mb-2">{playlist.artist}</p>
-                  <p className="text-xs text-zinc-500">{playlist.tracks} tracks</p>
-                </div>
-              </div>
+                    </Box>
+                  </Box>
+                </Box>
+                <Box sx={{ p: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {playlist.title}
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.875rem', color: '#a1a1aa', mb: 1 }}>
+                    {playlist.artist}
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.75rem', color: '#71717a' }}>
+                    {playlist.tracks} tracks
+                  </Typography>
+                </Box>
+              </Box>
             ))}
-          </div>
-        </section>
+          </Box>
+        </Box>
 
         {/* Recommended Artists Section */}
-        <section className="mt-12 mb-12">
-          <h2 className="text-2xl font-bold mb-6">Recommended Artists</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        <Box component="section" sx={{ mt: 6, mb: 6 }}>
+          <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>
+            Recommended Artists
+          </Typography>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+                lg: 'repeat(6, 1fr)',
+              },
+              gap: 3,
+            }}
+          >
             {recommendedArtists.map((artist) => {
               const isFollowing = followedArtists.has(artist.id);
               return (
-                <div key={artist.id} className="group cursor-pointer">
-                  <div className="relative aspect-square rounded-full bg-gradient-to-br mb-3 overflow-hidden group-hover:scale-105 transition-transform">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${artist.image}`}></div>
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors"></div>
-                  </div>
-                  <h3 className="font-semibold text-sm truncate text-center mb-1">{artist.name}</h3>
-                  <p className="text-xs text-zinc-400 text-center mb-3">{artist.genre}</p>
-                  <button
+                <Box key={artist.id} sx={{ cursor: 'pointer' }}>
+                  <Box
+                    sx={{
+                      position: 'relative',
+                      aspectRatio: '1 / 1',
+                      borderRadius: '50%',
+                      mb: 1.5,
+                      overflow: 'hidden',
+                      transform: 'scale(1)',
+                      transition: 'transform 0.3s',
+                      '&:hover': { transform: 'scale(1.05)' },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        inset: 0,
+                        background: getGradient(artist.image),
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        inset: 0,
+                        bgcolor: 'rgba(0, 0, 0, 0.2)',
+                        transition: 'background-color 0.3s',
+                        '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.3)' },
+                      }}
+                    />
+                  </Box>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: '0.875rem',
+                      textAlign: 'center',
+                      mb: 0.5,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {artist.name}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: '0.75rem',
+                      color: '#a1a1aa',
+                      textAlign: 'center',
+                      mb: 1.5,
+                    }}
+                  >
+                    {artist.genre}
+                  </Typography>
+                  <Button
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleFollow(artist.id);
                     }}
-                    className={`w-full py-2 px-4 rounded-full text-sm font-semibold transition-all ${
-                      isFollowing
-                        ? 'bg-white text-black hover:bg-zinc-200'
-                        : 'bg-zinc-800 text-white hover:bg-zinc-700 border border-zinc-700'
-                    }`}
+                    fullWidth
+                    sx={{
+                      py: 1,
+                      px: 2,
+                      borderRadius: '9999px',
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      textTransform: 'none',
+                      ...(isFollowing
+                        ? {
+                          bgcolor: 'white',
+                          color: 'black',
+                          '&:hover': { bgcolor: '#e4e4e7' },
+                        }
+                        : {
+                          bgcolor: '#27272a',
+                          color: 'white',
+                          border: '1px solid #3f3f46',
+                          '&:hover': { bgcolor: '#3f3f46' },
+                        }),
+                    }}
                   >
                     {isFollowing ? 'Following' : 'Follow'}
-                  </button>
-                </div>
+                  </Button>
+                </Box>
               );
             })}
-          </div>
-        </section>
+          </Box>
+        </Box>
 
         {/* New Releases Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">New Releases</h2>
-          <p className="text-zinc-400 mb-6">Latest releases from artists you follow</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Box component="section" sx={{ mb: 6 }}>
+          <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>
+            New Releases
+          </Typography>
+          <Typography sx={{ color: '#a1a1aa', mb: 3 }}>
+            Latest releases from artists you follow
+          </Typography>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                md: 'repeat(2, 1fr)',
+                lg: 'repeat(4, 1fr)',
+              },
+              gap: 3,
+            }}
+          >
             {newReleases.map((release) => (
-              <div
+              <Box
                 key={release.id}
-                className="group relative overflow-hidden rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-all duration-300 cursor-pointer"
+                sx={{
+                  position: 'relative',
+                  overflow: 'hidden',
+                  borderRadius: '12px',
+                  bgcolor: '#27272a',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  '&:hover': { bgcolor: '#3f3f46' },
+                }}
               >
-                <div className="relative aspect-square">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${release.image}`}></div>
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors"></div>
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
-                      <svg className="w-8 h-8 text-purple-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
+                <Box
+                  sx={{
+                    position: 'relative',
+                    aspectRatio: '1 / 1',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: getGradient(release.image),
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      bgcolor: 'rgba(0, 0, 0, 0.2)',
+                      transition: 'background-color 0.3s',
+                      '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.3)' },
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      opacity: 0,
+                      transition: 'opacity 0.3s',
+                      '&:hover': { opacity: 1 },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 64,
+                        height: 64,
+                        bgcolor: 'white',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                        transform: 'scale(1)',
+                        transition: 'transform 0.3s',
+                        '&:hover': { transform: 'scale(1.1)' },
+                      }}
+                    >
+                      <svg width="32" height="32" fill="#9333ea" viewBox="0 0 24 24" style={{ marginLeft: '4px' }}>
+                        <path d="M8 5v14l11-7z" />
                       </svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-lg mb-1 truncate">{release.title}</h3>
-                  <p className="text-sm text-zinc-400 mb-2">{release.artist}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-zinc-500">{release.type}</span>
-                    <span className="text-xs text-zinc-500">{release.date}</span>
-                  </div>
-                </div>
-              </div>
+                    </Box>
+                  </Box>
+                </Box>
+                <Box sx={{ p: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {release.title}
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.875rem', color: '#a1a1aa', mb: 1 }}>
+                    {release.artist}
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Typography sx={{ fontSize: '0.75rem', color: '#71717a' }}>
+                      {release.type}
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.75rem', color: '#71717a' }}>
+                      {release.date}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
             ))}
-          </div>
-        </section>
+          </Box>
+        </Box>
 
         {/* Events Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Events</h2>
-          <p className="text-zinc-400 mb-6">Upcoming concerts from artists you follow</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Box component="section" sx={{ mb: 6 }}>
+          <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>
+            Events
+          </Typography>
+          <Typography sx={{ color: '#a1a1aa', mb: 3 }}>
+            Upcoming concerts from artists you follow
+          </Typography>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                md: 'repeat(2, 1fr)',
+              },
+              gap: 3,
+            }}
+          >
             {events.map((event) => (
-              <div
+              <Box
                 key={event.id}
-                className="group relative overflow-hidden rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-all duration-300 cursor-pointer"
+                sx={{
+                  position: 'relative',
+                  overflow: 'hidden',
+                  borderRadius: '12px',
+                  bgcolor: '#27272a',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  '&:hover': { bgcolor: '#3f3f46' },
+                }}
               >
-                <div className="flex gap-4 p-6">
-                  <div className={`relative w-24 h-24 rounded-lg bg-gradient-to-br ${event.image} flex-shrink-0 overflow-hidden`}>
-                    <div className="absolute inset-0 bg-black/20"></div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-xl mb-1">{event.artist}</h3>
-                    <p className="text-sm text-zinc-400 mb-2">{event.venue}</p>
-                    <p className="text-sm text-zinc-500 mb-4">{event.city}</p>
-                    <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-2 text-zinc-400">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <Box sx={{ display: 'flex', gap: 2, p: 3 }}>
+                  <Box
+                    sx={{
+                      position: 'relative',
+                      width: 96,
+                      height: 96,
+                      borderRadius: '8px',
+                      background: getGradient(event.image),
+                      flexShrink: 0,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        inset: 0,
+                        bgcolor: 'rgba(0, 0, 0, 0.2)',
+                      }}
+                    />
+                  </Box>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                      {event.artist}
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.875rem', color: '#a1a1aa', mb: 1 }}>
+                      {event.venue}
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.875rem', color: '#71717a', mb: 2 }}>
+                      {event.city}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, fontSize: '0.875rem' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#a1a1aa' }}>
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        <span>{event.date}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-zinc-400">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <Typography sx={{ fontSize: '0.875rem', color: '#a1a1aa' }}>
+                          {event.date}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#a1a1aa' }}>
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span>{event.time}</span>
-                      </div>
-                    </div>
-                    <button className="mt-4 px-6 py-2 bg-white text-black rounded-full font-semibold hover:bg-zinc-200 transition-colors">
+                        <Typography sx={{ fontSize: '0.875rem', color: '#a1a1aa' }}>
+                          {event.time}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Button
+                      sx={{
+                        mt: 2,
+                        px: 3,
+                        py: 1,
+                        bgcolor: 'white',
+                        color: 'black',
+                        borderRadius: '9999px',
+                        fontWeight: 600,
+                        textTransform: 'none',
+                        '&:hover': { bgcolor: '#e4e4e7' },
+                      }}
+                    >
                       Get Tickets
-                    </button>
-                  </div>
-                </div>
-              </div>
+                    </Button>
+                  </Box>
+                </Box>
+              </Box>
             ))}
-          </div>
-        </section>
-      </main>
+          </Box>
+        </Box>
+      </Box>
 
       {/* Now Playing Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-zinc-900 border-t border-zinc-800 p-4">
-        <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded flex-shrink-0"></div>
-            <div className="min-w-0 flex-1">
-              <p className="font-semibold text-sm truncate">Currently Playing</p>
-              <p className="text-xs text-zinc-400 truncate">Artist Name</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="w-10 h-10 flex items-center justify-center hover:bg-zinc-800 rounded-full transition-colors">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6 6h2v12H6zm10 0h2v12h-2z"/>
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          bgcolor: '#18181b',
+          borderTop: '1px solid #27272a',
+          p: 2,
+        }}
+      >
+        <Box
+          sx={{
+            maxWidth: '1280px',
+            mx: 'auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1, minWidth: 0 }}>
+            <Box
+              sx={{
+                width: 56,
+                height: 56,
+                background: 'linear-gradient(to bottom right, #a855f7, #ec4899)',
+                borderRadius: '4px',
+                flexShrink: 0,
+              }}
+            />
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography sx={{ fontWeight: 600, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                Currently Playing
+              </Typography>
+              <Typography sx={{ fontSize: '0.75rem', color: '#a1a1aa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                Artist Name
+              </Typography>
+            </Box>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Button
+              sx={{
+                minWidth: 40,
+                width: 40,
+                height: 40,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                color: 'white',
+                '&:hover': { bgcolor: '#27272a' },
+              }}
+            >
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 6h2v12H6zm10 0h2v12h-2z" />
               </svg>
-            </button>
-            <button className="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center hover:scale-105 transition-transform">
-              <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z"/>
+            </Button>
+            <Button
+              sx={{
+                minWidth: 48,
+                width: 48,
+                height: 48,
+                bgcolor: 'white',
+                color: 'black',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                '&:hover': {
+                  bgcolor: 'white',
+                  transform: 'scale(1.05)',
+                },
+                transition: 'transform 0.2s',
+              }}
+            >
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" style={{ marginLeft: '4px' }}>
+                <path d="M8 5v14l11-7z" />
               </svg>
-            </button>
-            <button className="w-10 h-10 flex items-center justify-center hover:bg-zinc-800 rounded-full transition-colors">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+            </Button>
+            <Button
+              sx={{
+                minWidth: 40,
+                width: 40,
+                height: 40,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                color: 'white',
+                '&:hover': { bgcolor: '#27272a' },
+              }}
+            >
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
               </svg>
-            </button>
-          </div>
-          <div className="hidden lg:flex items-center gap-4 flex-1 justify-end">
-            <div className="w-24 bg-zinc-700 rounded-full h-1">
-              <div className="bg-white h-1 rounded-full" style={{ width: "30%" }}></div>
-            </div>
-            <span className="text-xs text-zinc-400 w-12 text-right">1:23 / 3:45</span>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Button>
+          </Box>
+          <Box
+            sx={{
+              display: { xs: 'none', lg: 'flex' },
+              alignItems: 'center',
+              gap: 2,
+              flex: 1,
+              justifyContent: 'flex-end',
+            }}
+          >
+            <Box
+              sx={{
+                width: 96,
+                height: 4,
+                bgcolor: '#3f3f46',
+                borderRadius: '9999px',
+              }}
+            >
+              <Box
+                sx={{
+                  width: '30%',
+                  height: 4,
+                  bgcolor: 'white',
+                  borderRadius: '9999px',
+                }}
+              />
+            </Box>
+            <Typography sx={{ fontSize: '0.75rem', color: '#a1a1aa', width: 48, textAlign: 'right' }}>
+              1:23 / 3:45
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 }
