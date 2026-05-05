@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Stream - Discover Your Sound",
-  description: "Stream millions of songs, discover new artists, and create the perfect playlist for every moment.",
+  description:
+    "Social Spotify feed, share posts about songs artists and concerts, and listen with embedded Spotify players.",
 };
 
 export default function RootLayout({
