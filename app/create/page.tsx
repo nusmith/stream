@@ -1,292 +1,305 @@
-'use client';
+"use client";
 
-import { Box, Button, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  MenuItem,
+  Select,
+  type SelectChangeEvent,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useMemo, useState } from "react";
+import { AppShell } from "@/components/AppShell";
+import { SpotifyEmbed } from "@/components/SpotifyEmbed";
+import {
+  parseSpotifyInput,
+  type SpotifyResourceType,
+} from "@/lib/spotify/parse";
 
-export default function Create() {
+type ComposeKind = "song" | "artist" | "event";
+
+/** Spotify embed preview for event posts — track or playlist teasers */
+const EVENT_TEASER_TYPES: SpotifyResourceType[] = ["track", "playlist"];
+
+export default function CreatePostPage() {
+  const [composeKind, setComposeKind] = useState<ComposeKind>("song");
+  const [spotifyLink, setSpotifyLink] = useState(
+    "https://open.spotify.com/track/11dFghVXANMlKmJXsNCbNl",
+  );
+  const [caption, setCaption] = useState("");
+  const [eventTitle, setEventTitle] = useState("Summer Nights Tour");
+  const [eventVenue, setEventVenue] = useState("Red Rocks Amphitheatre");
+  const [eventWhen, setEventWhen] = useState("Aug 14 · doors 7:30pm");
+
+  const [submittedMessage, setSubmittedMessage] = useState<string | null>(null);
+
+  const parsedEmbed = useMemo(() => {
+    const p = parseSpotifyInput(spotifyLink);
+    if (!p) return null;
+    if (composeKind === "song") {
+      return p.type === "track" ? p : null;
+    }
+    if (composeKind === "artist") {
+      return p.type === "artist" ? p : null;
+    }
+    if (composeKind === "event") {
+      return p.type === "track" || p.type === "playlist" ? p : null;
+    }
+    return null;
+  }, [composeKind, spotifyLink]);
+
+  const handleKindChange = (e: SelectChangeEvent<ComposeKind>) => {
+    setComposeKind(e.target.value as ComposeKind);
+    setSubmittedMessage(null);
+  };
+
+  const handleSubmit = () => {
+    if (composeKind === "event") {
+      if (!eventTitle.trim()) {
+        setSubmittedMessage("Add an event title before posting.");
+        return;
+      }
+    } else if (!parsedEmbed) {
+      setSubmittedMessage(
+        composeKind === "song" ?
+          "Paste a valid Spotify track link or URI."
+        : "Paste a valid Spotify artist link or URI.",
+      );
+      return;
+    }
+    setSubmittedMessage("Queued locally — connect your API to publish for real.");
+  };
+
+  const spotifyPlaceholder = {
+    song: "Paste a Spotify track link, URI, or ID",
+    artist: "Paste a Spotify artist link, URI, or ID",
+    event: "Optional: track or playlist to tease the show",
+  }[composeKind];
+
+  const eventPreviewParsed = useMemo(() => {
+    if (composeKind !== "event") return null;
+    const p = parseSpotifyInput(spotifyLink);
+    if (!p || !EVENT_TEASER_TYPES.includes(p.type)) return null;
+    return p;
+  }, [composeKind, spotifyLink]);
+
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #18181b, #27272a, #18181b)',
-        color: 'white',
-        pb: '96px',
-      }}
-    >
-      {/* Header */}
-      <Box
-        component="header"
-        sx={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 50,
-          backgroundColor: 'rgba(24, 24, 27, 0.8)',
-          backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid #27272a',
-        }}
-      >
-        <Box
-          sx={{
-            maxWidth: '1280px',
-            mx: 'auto',
-            px: 3,
-            py: 2,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                background: 'linear-gradient(to bottom right, #a855f7, #ec4899)',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold',
-                fontSize: '1.25rem',
-              }}
-            >
-              S
-            </Box>
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 'bold',
-                background: 'linear-gradient(to right, #a78bfa, #f472b6)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              Stream
-            </Typography>
-          </Box>
-          <Box
-            component="nav"
-            sx={{
-              display: { xs: 'none', md: 'flex' },
-              alignItems: 'center',
-              gap: 4,
-            }}
-          >
-            <Typography
-              component="a"
-              href="/"
-              sx={{
-                color: '#a1a1aa',
-                textDecoration: 'none',
-                '&:hover': { color: 'white' },
-                transition: 'color 0.2s',
-              }}
-            >
-              Home
-            </Typography>
-            <Typography
-              component="a"
-              href="/discover"
-              sx={{
-                color: '#a1a1aa',
-                textDecoration: 'none',
-                '&:hover': { color: 'white' },
-                transition: 'color 0.2s',
-              }}
-            >
-              Discover
-            </Typography>
-            <Typography
-              component="a"
-              href="/social"
-              sx={{
-                color: '#a1a1aa',
-                textDecoration: 'none',
-                '&:hover': { color: 'white' },
-                transition: 'color 0.2s',
-              }}
-            >
-              Social
-            </Typography>
-            <Typography
-              component="a"
-              href="/create"
-              sx={{
-                color: 'white',
-                textDecoration: 'none',
-              }}
-            >
-              Create
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Button
-              variant="contained"
-              sx={{
-                px: 2,
-                py: 1,
-                fontSize: '0.875rem',
-                fontWeight: 500,
-                color: 'white',
-                bgcolor: '#27272a',
-                borderRadius: '9999px',
-                textTransform: 'none',
-                '&:hover': { bgcolor: '#3f3f46' },
-              }}
-            >
-              Sign In
-            </Button>
-          </Box>
-        </Box>
-      </Box>
+    <AppShell>
+      <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
+        Create post
+      </Typography>
+      <Typography sx={{ color: "#a1a1aa", mb: 4, maxWidth: 520 }}>
+        Share a Spotify song or artist embed, or an event poster with optional audio. Wire this
+        form to your backend + Spotify APIs when ready.
+      </Typography>
 
       <Box
-        component="main"
         sx={{
-          maxWidth: '1280px',
-          mx: 'auto',
-          px: 3,
-          py: 6,
+          display: "grid",
+          gap: 4,
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+          alignItems: "start",
         }}
       >
-        <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2 }}>
-          Create
-        </Typography>
-        <Typography sx={{ color: '#a1a1aa' }}>
-          Create playlists, upload music, and share your creations.
-        </Typography>
-      </Box>
-
-      {/* Now Playing Bar */}
-      <Box
-        sx={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          bgcolor: '#18181b',
-          borderTop: '1px solid #27272a',
-          p: 2,
-        }}
-      >
-        <Box
-          sx={{
-            maxWidth: '1280px',
-            mx: 'auto',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1, minWidth: 0 }}>
-            <Box
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <Box>
+            <Typography sx={{ fontWeight: 600, mb: 1 }}>About</Typography>
+            <Select<ComposeKind>
+              size="small"
+              fullWidth
+              value={composeKind}
+              onChange={handleKindChange}
               sx={{
-                width: 56,
-                height: 56,
-                background: 'linear-gradient(to bottom right, #a855f7, #ec4899)',
-                borderRadius: '4px',
-                flexShrink: 0,
-              }}
-            />
-            <Box sx={{ minWidth: 0, flex: 1 }}>
-              <Typography sx={{ fontWeight: 600, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                Currently Playing
-              </Typography>
-              <Typography sx={{ fontSize: '0.75rem', color: '#a1a1aa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                Artist Name
-              </Typography>
-            </Box>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Button
-              sx={{
-                minWidth: 40,
-                width: 40,
-                height: 40,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '50%',
-                color: 'white',
-                '&:hover': { bgcolor: '#27272a' },
-              }}
-            >
-              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6 6h2v12H6zm10 0h2v12h-2z"/>
-              </svg>
-            </Button>
-            <Button
-              sx={{
-                minWidth: 48,
-                width: 48,
-                height: 48,
-                bgcolor: 'white',
-                color: 'black',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                '&:hover': {
-                  bgcolor: 'white',
-                  transform: 'scale(1.05)',
+                bgcolor: "#27272a",
+                color: "white",
+                borderRadius: 1,
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#3f3f46",
                 },
-                transition: 'transform 0.2s',
               }}
             >
-              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" style={{ marginLeft: '4px' }}>
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-            </Button>
-            <Button
-              sx={{
-                minWidth: 40,
-                width: 40,
-                height: 40,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '50%',
-                color: 'white',
-                '&:hover': { bgcolor: '#27272a' },
-              }}
-            >
-              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
-              </svg>
-            </Button>
+              <MenuItem value="song">Song</MenuItem>
+              <MenuItem value="artist">Artist</MenuItem>
+              <MenuItem value="event">Concert / event</MenuItem>
+            </Select>
           </Box>
-          <Box
-            sx={{
-              display: { xs: 'none', lg: 'flex' },
-              alignItems: 'center',
-              gap: 2,
-              flex: 1,
-              justifyContent: 'flex-end',
-            }}
-          >
-            <Box
-              sx={{
-                width: 96,
-                height: 4,
-                bgcolor: '#3f3f46',
-                borderRadius: '9999px',
-              }}
-            >
-              <Box
+
+          {composeKind === "event" ?
+            <>
+              <TextField
+                label="Event title"
+                value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
+                fullWidth
+                slotProps={{
+                  htmlInput: { sx: { color: "white" } },
+                  inputLabel: { sx: { color: "#a1a1aa" } },
+                }}
                 sx={{
-                  width: '30%',
-                  height: 4,
-                  bgcolor: 'white',
-                  borderRadius: '9999px',
+                  "& .MuiOutlinedInput-root": {
+                    bgcolor: "#27272a",
+                  },
+                  "& fieldset": { borderColor: "#3f3f46" },
                 }}
               />
-            </Box>
-            <Typography sx={{ fontSize: '0.75rem', color: '#a1a1aa', width: 48, textAlign: 'right' }}>
-              1:23 / 3:45
+              <TextField
+                label="Venue"
+                value={eventVenue}
+                onChange={(e) => setEventVenue(e.target.value)}
+                fullWidth
+                slotProps={{
+                  htmlInput: { sx: { color: "white" } },
+                  inputLabel: { sx: { color: "#a1a1aa" } },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": { bgcolor: "#27272a" },
+                  "& fieldset": { borderColor: "#3f3f46" },
+                }}
+              />
+              <TextField
+                label="Date & time"
+                value={eventWhen}
+                onChange={(e) => setEventWhen(e.target.value)}
+                fullWidth
+                slotProps={{
+                  htmlInput: { sx: { color: "white" } },
+                  inputLabel: { sx: { color: "#a1a1aa" } },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": { bgcolor: "#27272a" },
+                  "& fieldset": { borderColor: "#3f3f46" },
+                }}
+              />
+            </>
+          : null}
+
+          <TextField
+            label={
+              composeKind === "event" ?
+                spotifyPlaceholder
+              : "Spotify URL, URI, or ID"
+            }
+            value={spotifyLink}
+            onChange={(e) => setSpotifyLink(e.target.value)}
+            fullWidth
+            multiline={composeKind === "event"}
+            minRows={composeKind === "event" ? 2 : 1}
+            slotProps={{
+              htmlInput: { sx: { color: "white", fontFamily: "inherit" } },
+              inputLabel: { sx: { color: "#a1a1aa" } },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": { bgcolor: "#27272a" },
+              "& fieldset": { borderColor: "#3f3f46" },
+            }}
+          />
+
+          <TextField
+            label="Caption"
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+            fullWidth
+            multiline
+            minRows={3}
+            placeholder="Say something about what you're sharing..."
+            slotProps={{
+              htmlInput: { sx: { color: "white" } },
+              inputLabel: { sx: { color: "#a1a1aa" } },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": { bgcolor: "#27272a" },
+              "& fieldset": { borderColor: "#3f3f46" },
+            }}
+          />
+
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            sx={{
+              alignSelf: "flex-start",
+              px: 3,
+              py: 1.25,
+              textTransform: "none",
+              fontWeight: 600,
+              background: "linear-gradient(to right, #9333ea, #db2777)",
+              "&:hover": {
+                background: "linear-gradient(to right, #7c3aed, #be185d)",
+              },
+            }}
+          >
+            Post
+          </Button>
+
+          {submittedMessage ?
+            <Typography sx={{ color: submittedMessage.includes("Queued") ? "#86efac" : "#fca5a5" }}>
+              {submittedMessage}
             </Typography>
-          </Box>
+          : null}
+        </Box>
+
+        <Box
+          sx={{
+            position: "sticky",
+            top: 96,
+            bgcolor: "#18181b",
+            border: "1px solid #27272a",
+            borderRadius: 3,
+            p: 2.5,
+          }}
+        >
+          <Typography sx={{ fontWeight: 700, mb: 2 }}>Preview</Typography>
+
+          {composeKind === "event" ?
+            <>
+              <Box
+                sx={{
+                  mb: 2,
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: "#27272a",
+                  border: "1px solid #3f3f46",
+                }}
+              >
+                <Typography sx={{ fontWeight: 700, mb: 0.5 }}>{eventTitle || "Untitled"}</Typography>
+                <Typography sx={{ color: "#a1a1aa", fontSize: "0.875rem" }}>
+                  {eventVenue} · {eventWhen}
+                </Typography>
+              </Box>
+              {caption ?
+                <Typography sx={{ color: "#e4e4e7", mb: 2, fontSize: "0.9375rem" }}>
+                  {caption}
+                </Typography>
+              : null}
+              {eventPreviewParsed ?
+                <SpotifyEmbed
+                  type={eventPreviewParsed.type}
+                  id={eventPreviewParsed.id}
+                  variant={eventPreviewParsed.type === "playlist" ? "compact" : "compact"}
+                />
+              : (
+                <Typography sx={{ fontSize: "0.875rem", color: "#71717a" }}>
+                  Paste a Spotify track or playlist URL to preview audio for this event.
+                </Typography>
+              )}
+            </>
+          : parsedEmbed ?
+            <>
+              <Typography sx={{ color: "#e4e4e7", mb: 2 }}>{caption || "Your caption"}</Typography>
+              <SpotifyEmbed
+                type={parsedEmbed.type as "track" | "artist"}
+                id={parsedEmbed.id}
+              />
+            </>
+          : (
+            <Typography sx={{ fontSize: "0.875rem", color: "#71717a" }}>
+              {composeKind === "song" ?
+                "Paste a track link to see the Spotify embed preview."
+              : "Paste an artist profile link to see the embed preview."}
+            </Typography>
+          )}
         </Box>
       </Box>
-    </Box>
+    </AppShell>
   );
 }
